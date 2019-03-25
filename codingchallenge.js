@@ -19,7 +19,7 @@ function someMethod(A) {
 function someMethod(A) {
     let ans = ""
 	debugger
-	let strNum = A.toString()
+	let strNum = A.toStraing()
     let halfWay = strNum.length / 2
     for (let i= 0; i < halfWay; i++){
         let endding = (i + 1) * -1

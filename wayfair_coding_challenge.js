@@ -115,143 +115,190 @@ function whosBig(x, y){
 
 
 class LeaderBoard {
-constructor(){
-this.scoreBoard = {}
-this.heapLeaderBoard = []
-}
+  constructor(){
+    this.scoreBoard = {}
+    this.heapLeaderBoard = []
+  }
 
 // add number to heap find method for player_id then add to score and times and then find the average value return the average value
-add_score = (player_id, score) => {   
-if (this.scoreBoard.hasOwnProperty(player_id)){
-  this.scoreBoard[player_id].times += 1
-  this.scoreBoard[player_id].score += score
-} else {
-  this.scoreBoard[player_id] = {}
-  this.scoreBoard[player_id].times = 1
-  this.scoreBoard[player_id].score = score
-  this.addToLeaderHeap(player_id, this.heapLeaderBoard)
-}
-return this.scoreBoard[player_id].score / this.scoreBoard[player_id].times
-};
+  add_score(player_id, score){   
+
+    if (this.scoreBoard.hasOwnProperty(player_id)){
+      this.scoreBoard[player_id].times += 1
+      this.scoreBoard[player_id].score += score
+      this.update(this.scoreBoard[player_id], this.heapLeaderBoard)
+      // can you make an update function
+    } else {
+      this.scoreBoard[player_id] = {}
+      this.scoreBoard[player_id].times = 1
+      this.scoreBoard[player_id].score = score
+      this.addToLeaderHeap(player_id, this.heapLeaderBoard)
+    }
+    // console.log(this.heapLeaderBoard)
+  return this.scoreBoard[player_id].score / this.scoreBoard[player_id].times
+  };
 
 
-top = (num_players) => {
-// console.log(this.heapLeaderBoard)
-// we need to implement a small heap with a new store
-// we add num_players of the original numbers to the new topHeap
-let topHeap = []
-let copyHeap = this.heapLeaderBoard.slice()
-for (let i = 0; i < copyHeap.length; i++){
-  this.addToLeaderHeap(copyHeap[i], topHeap)
-}
-let result = []
-for(let i = 0; i < num_players; i++){
-  let semi = this.extract(topHeap)
-  result.push(semi)
-}
-return result
- 
-};
+  top(num_players){
+    // console.log(this.heapLeaderBoard)
+    // we need to implement a small heap with a new store
+    // we add num_players of the original numbers to the new topHeap
+    // let topHeap = []
+    let copyHeap = this.heapLeaderBoard.slice()
+    // let allPlayers = Object.keys(this.scoreBoard)
+    // for (let i = 0; i < allPlayers.length; i++){
+    //   this.addToLeaderHeap(parseInt(allPlayers[i]), topHeap)
+    // }
+    let result = []
+    for(let i = 0; i < num_players; i++){
+      let semi = this.extract(copyHeap)
+      result.push(semi)
+    }
+    return result
+    
+  };
 
-reset = (player_id) => {
-this.scoreBoard[player_id].times = 0
-this.scoreBoard[player_id].score = 0
-
-
-// let tempVal = this.heapLeaderBoard[0]
-};
-
-
-
-extract = (store) => {
-// console.log(this.scoreBoard)
-console.log(store)
-let tempVal = store[0]
-store[0] = store[store.length - 1]
-store[store.length - 1] = tempVal
-let val = store.pop()
-this.heapify_down(store, 0, store.length)
-return val
-}
+  reset(player_id){
+    this.scoreBoard[player_id].times = 0
+    this.scoreBoard[player_id].score = 0
+    this.update(this.scoreBoard[player_id], this.heapLeaderBoard)
+  // let tempVal = this.heapLeaderBoard[0]
+  };
 
 
-addToLeaderHeap = (scoreBoardObj, store) => {
-store.push(scoreBoardObj)
-return this.heapify_up(store, store.length - 1, store.length)
-}
 
-heapify_down(arr, parent_idx, len = arr.length){
-
-let idxs = this.child_indices(len, parent_idx)
-if (idxs.length === 0) {
-  return arr
-}
-
-let smallest_idx = null 
-if (idxs.length === 1) {
-  smallest_idx = idxs[0]
-} else {
-  if (whosBig(arr[idxs[0]], arr[idxs[1]]) < 0){
-    smallest_idx = idxs[0]
-  } else {
-    smallest_idx = idxs[1]
+  extract(store){
+    // console.log(this.scoreBoard)
+    // console.log(store)
+    let tempVal = store[0]
+    store[0] = store[store.length - 1]
+    store[store.length - 1] = tempVal
+    let val = store.pop()
+    this.heapify_down(store, 0, store.length)
+    return val
   }
-}
 
-let smallest_val = this.avgScore(arr[smallest_idx])
-let parent_val = this.avgScore(arr[parent_idx])
-
-if (whosBig(smallest_val, parent_val) > 0) {
-  let tempVal = arr[parent_idx]
-  arr[parent_idx] = arr[smallest_idx]
-  arr[smallest_idx] = tempVal
-  this.heapify_down(arr, smallest_idx, len)
-}
-return arr
-}
-              
-// need to add a position marker for whereever a value ends up
-// will make extraction easier
-heapify_up = (arr, child_idx, len = arr.length) => {
-  
-  if (child_idx === 0) {
-    return arr;
+  update(scoreBoardObj, store){
+    // check(scoreBoardObj.pos)
+    let position = scoreBoardObj.pos
+    // console.log(scoreBoardObj)
+    // console.log(Object.keys(scoreBoardObj))
+    // console.log(store)
+    // console.log(store[position])
+    // console.log(this.scoreBoard)
+    let playerKey = parseInt(Object.keys(scoreBoardObj)[0])
+    // console.log(playerKey)
+    let parent_idx = this.parent_index(position)
+    let child_val = this.avgScore(store[position])
+    let parent_val = this.avgScore(store[position])
+    // console.log('here we are')
+    if (whosBig(child_val, parent_val) > 0){
+      let tempVal = store[position]
+      store[position] = store[parent_idx]
+      store[parent_idx] = tempVal
+      this.heapify_up(store, parent_idx, len = store.length)
+    } else {
+      // console.log('right here')
+      // console.log(store)
+      this.heapify_down(store, position,store.length)
+    }
   }
-  let parent_idx = this.parent_index(child_idx)
-  // console.log(arr)
-  let child_val = this.avgScore(arr[child_idx])
-  let parent_val = this.avgScore(arr[parent_idx])
-  if (whosBig(child_val, parent_val) > 0){
-    let tempVal = arr[child_idx]
-    arr[child_idx] = arr[parent_idx]
-    arr[parent_idx] = tempVal
-    this.heapify_up(arr, parent_idx, len = arr.length)
+
+
+  addToLeaderHeap(scoreBoardObj, store){
+    store.push(scoreBoardObj)
+    return this.heapify_up(store, store.length - 1, store.length)
   }
-  return arr
-}
+
+  heapify_down(arr, parent_idx, len = arr.length){
+
+    let idxs = this.child_indices(len, parent_idx)
+    if (idxs.length === 0) {
+      // add the position here maybe last?
+      // console.log(arr)
+      // console.log(parent_idx)
+      // console.log(arr[parent_idx])
+      // console.log(this.scoreBoard)
+      // this.scoreBoard[arr[parent_idx]].pos = parent_idx
+      return arr
+    }
+    // console.log(idxs)
+    let smallest_idx = null 
+    if (idxs.length === 1) {
+      smallest_idx = idxs[0]
+    } else {
+      // console.log(this.avgScore(arr[idxs[0]]))
+      // console.log(this.avgScore(arr[idxs[1]]))
+      if (whosBig(this.avgScore(arr[idxs[0]]), this.avgScore(arr[idxs[1]])) > 0){
+        smallest_idx = idxs[0]
+      } else {
+        smallest_idx = idxs[1]
+      }
+    }
+    let smallest_val = this.avgScore(arr[smallest_idx])
+    // console.log(smallest_val)
+    let parent_val = this.avgScore(arr[parent_idx])
+
+    if (whosBig(smallest_val, parent_val) > 0) {
+      let tempVal = arr[parent_idx]
+      // add the position here
+      arr[parent_idx] = arr[smallest_idx]
+      this.scoreBoard[arr[parent_idx]].pos = parent_idx
+      arr[smallest_idx] = tempVal
+      this.scoreBoard[arr[smallest_idx]].pos = smallest_idx
+      this.heapify_down(arr, smallest_idx, len)
+    }
+    return arr
+  }
+                
+  // need to add a position marker for whereever a value ends up
+  // will make extraction easier
+  heapify_up(arr, child_idx, len = arr.length){
+    
+    if (child_idx === 0) {
+      this.scoreBoard[arr[child_idx]].pos = 0
+      // add the position here maybe
+      return arr;
+    }
+    let parent_idx = this.parent_index(child_idx)
+    // console.log(arr)
+    let child_val = this.avgScore(arr[child_idx])
+    let parent_val = this.avgScore(arr[parent_idx])
+    if (whosBig(child_val, parent_val) > 0){
+      // add the position here
+      let tempVal = arr[child_idx]
+      arr[child_idx] = arr[parent_idx]
+      this.scoreBoard[arr[child_idx]].pos = child_idx
+      arr[parent_idx] = tempVal
+      this.scoreBoard[arr[parent_idx]].pos = parent_idx
+      this.heapify_up(arr, parent_idx, len = arr.length)
+    }
+    return arr
+  }
 
 
-child_indices = (len, parent_index) => {
-let indices = [((parent_index + 1) * 2) - 1, (parent_index + 1) * 2]
-if (indices[indices.length - 1] >= len){
-  indices.pop()
-} 
-if (indices[indices.length - 1] >= len) {
-  indices.pop()
-}
-return indices
-}
+  child_indices(len, parent_index){
+    let indices = [((parent_index + 1) * 2) - 1, (parent_index + 1) * 2]
+    if (indices[indices.length - 1] >= len){
+      indices.pop()
+    } 
+    if (indices[indices.length - 1] >= len) {
+      indices.pop()
+    }
+    return indices
+  }
 
-parent_index = (child_index) => {
-return Math.floor((child_index - 1)/2)
-}
+  parent_index(child_index){
+    return Math.floor((child_index - 1)/2)
+  }
 
-avgScore = (player_id) => {
-if (this.scoreBoard[player_id].times === 0) {
-  return 0;
-}
-return this.scoreBoard[player_id].score / this.scoreBoard[player_id].times;
-}
+  avgScore(player_id){
+    // console.log(player_id)
+    if (this.scoreBoard[player_id].times === 0) {
+      return 0;
+    }
+    return this.scoreBoard[player_id].score / this.scoreBoard[player_id].times;
+  }
 
 // reset the number the score and the times to zero
 // have to find the number and then set the ids to zero
@@ -289,6 +336,10 @@ console.log('After reset top 3 [' + leader_board.top(3) + '] should equal [2, 1,
 console.log(array_equals(leader_board.top(3), [2, 1, 3]))
 
 
+leader_board.reset(1)
+leader_board.reset(2)
+leader_board.reset(3)
+console.log('new test')
 leader_board.add_score(1, 900)
 console.log(leader_board.add_score(2, 100) == 100)
 console.log(leader_board.add_score(2, 70) == 85)
@@ -298,4 +349,7 @@ console.log(leader_board.add_score(3, 300) == 300)
 console.log('Add score should return the average. test with 2 scores')
 console.log(leader_board.add_score(3, 85) == 192.5)
 console.log(leader_board.add_score(4, 1000) == 1000)
-console.log(leader.board.add_score(6, -5) == -5)
+console.log(leader_board.add_score(6, -5) == -5)
+
+console.log(array_equals(leader_board.top(3), [4,1,3]))
+console.log('Top 3 [' + leader_board.top(3) + '] should equal [4, 1, 3]:')

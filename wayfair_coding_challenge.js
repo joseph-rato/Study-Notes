@@ -134,13 +134,22 @@ class LeaderBoard {
       this.scoreBoard[player_id].score = score
       this.addToLeaderHeap(player_id, this.heapLeaderBoard)
     }
-    // console.log(this.heapLeaderBoard)
+    
   return this.scoreBoard[player_id].score / this.scoreBoard[player_id].times
   };
 
+  add_date(player_id, date){
+    if (this.scoreBoard.hasOwnProperty(player_id)){
+      this.scoreBoard[player_id].date = new Date(date)
+    } else {
+      this.scoreBoard[player_id] = {}
+      this.scoreBoard[player_id].date = new Date(date)
+    }
+  }
+
 
   top(num_players){
-    // console.log(this.heapLeaderBoard)
+    
     // we need to implement a small heap with a new store
     // we add num_players of the original numbers to the new topHeap
     // let topHeap = []
@@ -168,8 +177,8 @@ class LeaderBoard {
 
 
   extract(store){
-    // console.log(this.scoreBoard)
-    // console.log(store)
+    
+    
     let tempVal = store[0]
     store[0] = store[store.length - 1]
     store[store.length - 1] = tempVal
@@ -181,25 +190,25 @@ class LeaderBoard {
   update(scoreBoardObj, store){
     // check(scoreBoardObj.pos)
     let position = scoreBoardObj.pos
-    // console.log(scoreBoardObj)
-    // console.log(Object.keys(scoreBoardObj))
-    // console.log(store)
-    // console.log(store[position])
-    // console.log(this.scoreBoard)
+    
+    
+    
+    
+    
     let playerKey = parseInt(Object.keys(scoreBoardObj)[0])
-    // console.log(playerKey)
+    
     let parent_idx = this.parent_index(position)
     let child_val = this.avgScore(store[position])
     let parent_val = this.avgScore(store[position])
-    // console.log('here we are')
+    
     if (whosBig(child_val, parent_val) > 0){
       let tempVal = store[position]
       store[position] = store[parent_idx]
       store[parent_idx] = tempVal
       this.heapify_up(store, parent_idx, len = store.length)
     } else {
-      // console.log('right here')
-      // console.log(store)
+      
+      
       this.heapify_down(store, position,store.length)
     }
   }
@@ -215,20 +224,16 @@ class LeaderBoard {
     let idxs = this.child_indices(len, parent_idx)
     if (idxs.length === 0) {
       // add the position here maybe last?
-      // console.log(arr)
-      // console.log(parent_idx)
-      // console.log(arr[parent_idx])
-      // console.log(this.scoreBoard)
       // this.scoreBoard[arr[parent_idx]].pos = parent_idx
       return arr
     }
-    // console.log(idxs)
+    
     let smallest_idx = null 
     if (idxs.length === 1) {
       smallest_idx = idxs[0]
     } else {
-      // console.log(this.avgScore(arr[idxs[0]]))
-      // console.log(this.avgScore(arr[idxs[1]]))
+      
+      
       if (whosBig(this.avgScore(arr[idxs[0]]), this.avgScore(arr[idxs[1]])) > 0){
         smallest_idx = idxs[0]
       } else {
@@ -236,7 +241,7 @@ class LeaderBoard {
       }
     }
     let smallest_val = this.avgScore(arr[smallest_idx])
-    // console.log(smallest_val)
+    
     let parent_val = this.avgScore(arr[parent_idx])
 
     if (whosBig(smallest_val, parent_val) > 0) {
@@ -261,7 +266,7 @@ class LeaderBoard {
       return arr;
     }
     let parent_idx = this.parent_index(child_idx)
-    // console.log(arr)
+    
     let child_val = this.avgScore(arr[child_idx])
     let parent_val = this.avgScore(arr[parent_idx])
     if (whosBig(child_val, parent_val) > 0){
@@ -293,7 +298,7 @@ class LeaderBoard {
   }
 
   avgScore(player_id){
-    // console.log(player_id)
+    
     if (this.scoreBoard[player_id].times === 0) {
       return 0;
     }
@@ -351,5 +356,5 @@ console.log(leader_board.add_score(3, 85) == 192.5)
 console.log(leader_board.add_score(4, 1000) == 1000)
 console.log(leader_board.add_score(6, -5) == -5)
 
-console.log(array_equals(leader_board.top(3), [4,1,3]))
-console.log('Top 3 [' + leader_board.top(3) + '] should equal [4, 1, 3]:')
+console.log(array_equals(leader_board.top(4), [4,1,3,2]))
+console.log('Top 3 [' + leader_board.top(4) + '] should equal [4, 1, 3,2]:')

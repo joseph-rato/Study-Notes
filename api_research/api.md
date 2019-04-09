@@ -20,4 +20,22 @@ And a bar for yes/no for politician then a bar for the yes no by party totals
 
 Yes vs no on 
 
+There is a moving d3 graph:
+http://bl.ocks.org/atmccann/8966400
+
+model of US location graph
+mapbox api for propublica
+
+thats it for now modify these things to make it look good with data from politicians
+
+steps for tomorrow:
+
+1) do api pull of data based on persons name 
+2) once you get data structure the data to be read correctly on d3 graphs. 
+3) implement d3 graph examples
+4) modify d3 graph examples
+5) make css styling nice so it looks good
+6) do other tpyes of graphs for other apis 
+ 
+7) move to other project
 
